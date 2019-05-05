@@ -26,6 +26,9 @@
   <PropertyGroup>
     <Authors>Nickolas Lloyd</Authors>
     <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
+    <PackageId>smindinvern.State</PackageId>
+    <RepositoryUrl>https://github.com/smindinvern/State</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/smindinvern/State</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
