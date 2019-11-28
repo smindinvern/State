@@ -55,7 +55,7 @@ module State =
         /// <summary>
         /// From within a State computation, get the currently stored state.
         /// </summary>
-        let get : State<'s, 's> =
+        let get<'s> : State<'s, 's> =
             fun s -> (s, s)
         /// <summary>
         /// From within a State computation, store a new state.
@@ -87,7 +87,7 @@ module State =
         /// <typeparam name="'a">The type of the value produced by the computation.</typeparam>
         /// <typeparam name="'s">The type of the encapsulated state.</typeparam>
         /// </summary>
-        type State<'s, 'a> = Lazy<'s -> ('s * 'a)>
+        type State<'s, 'a> = Lazy<Strict.State<'s, 'a>>
 
         let inline internal bind (f: 'a -> State<'s, 'b>) (m: State<'s, 'a>) =
             lazy (Strict.bind (fun x -> (f x).Force()) (m.Force()))
@@ -128,7 +128,7 @@ module State =
         /// <summary>
         /// From within a State computation, get the currently stored state.
         /// </summary>
-        let get<'s> = lazy Strict.get
+        let get<'s> = lazy Strict.get<'s>
 
         /// <summary>
         /// From within a State computation, store a new state.
