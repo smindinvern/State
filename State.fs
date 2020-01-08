@@ -2,6 +2,8 @@ namespace smindinvern
 
 module State =
 
+    open Utils
+
     module Strict =
         /// <summary>
         /// A monad encapsulating a computation and an accompanying state.  The state
@@ -51,18 +53,27 @@ module State =
                 let! m' = m
                 return f' m'
             }
+
+        /// <summary>
+        /// Return a State computation containing the results of the given list of State computations.
+        /// </summary>
+        /// <param name="cs"></param>
+        let sequence (cs: State<'s, 'a> list) : State<'s, 'a list> =
+            List.foldBack (fun t s -> List.cons <@> t <*> s) cs (inject [])
     
         /// <summary>
         /// From within a State computation, get the currently stored state.
         /// </summary>
         let get<'s> : State<'s, 's> =
             fun s -> (s, s)
+
         /// <summary>
         /// From within a State computation, store a new state.
         /// </summary>
         /// <param name="s">The new state to be stored.</param>
         let put (s: 's) : State<'s, unit> =
             fun _ -> (s, ())
+
         /// <summary>
         /// From within a State computation, modify the currently stored state.
         /// </summary>
@@ -124,6 +135,13 @@ module State =
         /// <param name="m"></param>
         let inline (<*>) (f: State<'s, 'a -> 'b>) (m: State<'s, 'a>) =
             lazy (Strict.(<*>) (f.Force()) (m.Force()))
+
+        /// <summary>
+        /// Return a State computation containing the results of the given list of State computations.
+        /// </summary>
+        /// <param name="cs"></param>
+        let sequence (cs: State<'s, 'a> list) : State<'s, 'a list> =
+            List.foldBack (fun t s -> List.cons <@> t <*> s) cs (inject [])
 
         /// <summary>
         /// From within a State computation, get the currently stored state.

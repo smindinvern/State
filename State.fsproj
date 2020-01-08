@@ -4,7 +4,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.0.1</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <!-- AssemblyInfo properties -->
@@ -37,6 +37,7 @@
 
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="4.3.4" />
+    <PackageReference Include="smindinvern.Utils" Version="1.0.1" />
   </ItemGroup>
 
 </Project>
