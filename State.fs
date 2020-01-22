@@ -38,12 +38,7 @@ module State =
             bind (inject << f) m
     
         /// <summary>
-        /// Function composition lifted into the State monad.
-        /// The lifted function acts on the value produced by the State, rather than the
-        /// encapsulated state.
-        ///
-        /// Just as with normal function composition, (<*>) is associative, i.e.
-        /// f <*> (g <*> h) = (f <*> g) <*> h
+        /// Sequential application of a State.
         /// </summary>
         /// <param name="f"></param>
         /// <param name="m"></param>
@@ -124,12 +119,7 @@ module State =
             lazy (Strict.(<@>) f (m.Force()))
 
         /// <summary>
-        /// Function composition lifted into the State monad.
-        /// The lifted function acts on the value produced by the State, rather than the
-        /// encapsulated state.
-        ///
-        /// Just as with normal function composition, (<*>) is associative, i.e.
-        /// f <*> (g <*> h) = (f <*> g) <*> h
+        /// Sequential application of a State.
         /// </summary>
         /// <param name="f"></param>
         /// <param name="m"></param>
