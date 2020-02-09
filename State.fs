@@ -55,7 +55,17 @@ module State =
         /// <param name="cs"></param>
         let sequence (cs: State<'s, 'a> list) : State<'s, 'a list> =
             List.foldBack (fun t s -> List.cons <@> t <*> s) cs (inject [])
-    
+
+        /// <summary>
+        /// Perform a left fold over the elements of <see cref="xs" />
+        /// with the State threaded through the computation.
+        /// </summary>
+        /// <param name="f"></param>
+        /// <param name="seed"></param>
+        /// <param name="xs"></param>
+        let foldM (f: 'b -> 'a -> State<'s, 'b>) (seed: 'b) (xs: 'a list) =
+            List.fold (fun s a -> s >>= (flip f) a) (inject seed) xs
+
         /// <summary>
         /// From within a State computation, get the currently stored state.
         /// </summary>
@@ -77,6 +87,19 @@ module State =
         /// </param>
         let modify (f: 's -> 's) : State<'s, unit> =
             fun s -> (f s, ())
+
+        /// <summary>
+        /// Wrap a computation while preserving its value but discarding any
+        /// modifications made to the internal state.
+        /// </summary>
+        /// <param name="s">The State computation to wrap</param>
+        let discard (s: State<'s, 'a>) : State<'s, 'a> =
+            state {
+                let! original = get
+                let! a = s
+                do! put original
+                return a
+            }
     
         /// <summary>
         /// Given a State computation and an initial state value, run the computation and return the result.
@@ -134,6 +157,16 @@ module State =
             List.foldBack (fun t s -> List.cons <@> t <*> s) cs (inject [])
 
         /// <summary>
+        /// Perform a left fold over the elements of <see cref="xs" />
+        /// with the State threaded through the computation.
+        /// </summary>
+        /// <param name="f"></param>
+        /// <param name="seed"></param>
+        /// <param name="xs"></param>
+        let foldM (f: 'b -> 'a -> State<'s, 'b>) (seed: 'b) (xs: 'a list) =
+            List.fold (fun s a -> s >>= (flip f) a) (inject seed) xs
+
+        /// <summary>
         /// From within a State computation, get the currently stored state.
         /// </summary>
         let get<'s> = lazy Strict.get<'s>
@@ -151,6 +184,14 @@ module State =
         /// The currently stored state is run through this function, and the resulting value is stored.
         /// </param>
         let modify f = lazy (Strict.modify f)
+
+        /// <summary>
+        /// Wrap a computation while preserving its value but discarding any
+        /// modifications made to the internal state.
+        /// </summary>
+        /// <param name="s">The State computation to wrap</param>
+        let inline discard (s: State<'s, 'a>) : State<'s, 'a> =
+            lazy (Strict.discard (s.Force()))
 
         /// <summary>
         /// Given a State computation and an initial state value, run the computation and return the result.
